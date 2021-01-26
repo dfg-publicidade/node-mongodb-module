@@ -12,6 +12,8 @@
     },
     "dependencies": {
         "@types/mongodb": "^3.5.34",
+        "@dfgpublicidade/node-app-module": "git+https://github.com/dfg-publicidade/node-app-module.git",
+        "@dfgpublicidade/node-pagination-module": "git+https://github.com/dfg-publicidade/node-pagination-module.git",
         "mongodb": "^3.6.3"
     },
     "devDependencies": {

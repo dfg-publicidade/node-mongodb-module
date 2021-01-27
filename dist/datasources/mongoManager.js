@@ -9,23 +9,23 @@ const mongodb_1 = require("mongodb");
 const debug = debug_1.default('module:mongodb-manager');
 class MongoManager {
     static async connect(config) {
-        debug('Solicitação de conexão recebida');
+        debug('Connection request received ');
         if (MongoManager.client) {
-            debug('Entregando conexão anteriormente realizada');
+            debug('Delivering previously done connection');
             return Promise.resolve(MongoManager.client);
         }
         else {
-            debug('Efetuando nova conexão');
+            debug('Doing a new connection');
             const mongoCfg = Object.assign({}, config);
             const options = config.options;
             try {
                 const client = await mongodb_1.MongoClient.connect(mongoCfg.url, options);
-                debug('Conexão realizada');
+                debug('Connection done');
                 MongoManager.client = client;
                 return Promise.resolve(MongoManager.client);
             }
             catch (error) {
-                debug('Erro na tentativa de conexão');
+                debug('Connection attempt error');
                 throw error;
             }
         }
@@ -33,10 +33,10 @@ class MongoManager {
     static async close() {
         var _a;
         if ((_a = MongoManager.client) === null || _a === void 0 ? void 0 : _a.isConnected()) {
-            debug('Finalizando conexão');
+            debug('Closing connection');
             await MongoManager.client.close();
             MongoManager.client = undefined;
-            debug('Conexão finalizada');
+            debug('Connection close attempt error');
         }
     }
     static getClient() {

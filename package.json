@@ -11,9 +11,9 @@
         "test:all": "npm run test test/**/*.spec.ts test/**/**/*.spec.ts test/**/**/**/*.spec.ts"
     },
     "dependencies": {
-        "@types/mongodb": "^3.5.34",
         "@dfgpublicidade/node-app-module": "git+https://github.com/dfg-publicidade/node-app-module.git",
         "@dfgpublicidade/node-pagination-module": "git+https://github.com/dfg-publicidade/node-pagination-module.git",
+        "@types/mongodb": "^3.5.34",
         "mongodb": "^3.6.3"
     },
     "devDependencies": {

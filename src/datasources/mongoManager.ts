@@ -11,11 +11,11 @@ class MongoManager {
         debug('Connection request received ');
 
         if (MongoManager.client) {
-            debug('Delivering previously done connection');
+            debug('Delivering previously made connection');
             return Promise.resolve(MongoManager.client);
         }
         else {
-            debug('Doing a new connection');
+            debug('Making a new connection');
 
             const mongoCfg: any = { ...config };
             const options: MongoClientOptions = config.options;

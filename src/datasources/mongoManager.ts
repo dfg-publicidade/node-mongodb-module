@@ -22,7 +22,7 @@ class MongoManager {
             const options: MongoClientOptions = config.options;
 
             if (options.sslCA) {
-                options.sslCA = [fs.readFileSync(options.sslCA[0])];
+                options.sslCA = [fs.readFileSync(options.sslCA as unknown as string)];
             }
 
             try {

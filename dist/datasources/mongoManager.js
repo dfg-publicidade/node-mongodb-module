@@ -20,7 +20,7 @@ class MongoManager {
             const mongoCfg = Object.assign({}, config);
             const options = config.options;
             if (options.sslCA) {
-                options.sslCA = [fs_extra_1.default.readFileSync(options.sslCA[0])];
+                options.sslCA = [fs_extra_1.default.readFileSync(options.sslCA)];
             }
             try {
                 const client = await mongodb_1.MongoClient.connect(mongoCfg.url, options);

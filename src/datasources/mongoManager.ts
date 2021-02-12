@@ -1,4 +1,5 @@
 import appDebugger from 'debug';
+import fs from 'fs-extra';
 import { MongoClient, MongoClientOptions } from 'mongodb';
 
 /* Module */
@@ -19,6 +20,10 @@ class MongoManager {
 
             const mongoCfg: any = { ...config };
             const options: MongoClientOptions = config.options;
+
+            if (options.sslCA) {
+                options.sslCA = [fs.readFileSync(options.sslCA[0])];
+            }
 
             try {
                 const client: MongoClient = await MongoClient.connect(mongoCfg.url, options);

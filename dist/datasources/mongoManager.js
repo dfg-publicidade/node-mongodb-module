@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const debug_1 = __importDefault(require("debug"));
+const fs_extra_1 = __importDefault(require("fs-extra"));
 const mongodb_1 = require("mongodb");
 /* Module */
 const debug = debug_1.default('module:mongodb-manager');
@@ -18,6 +19,9 @@ class MongoManager {
             debug('Making a new connection');
             const mongoCfg = Object.assign({}, config);
             const options = config.options;
+            if (options.sslCA) {
+                options.sslCA = [fs_extra_1.default.readFileSync(options.sslCA[0])];
+            }
             try {
                 const client = await mongodb_1.MongoClient.connect(mongoCfg.url, options);
                 debug('Connection done');

@@ -1,5 +1,5 @@
 import Paginate from '@dfgpublicidade/node-pagination-module';
-import { Db, FindOneOptions, ObjectId } from 'mongodb';
+import { Db, ObjectId } from 'mongodb';
 declare abstract class DefaultService {
     protected static readonly collection: string;
     protected static readonly createdAtField: string;
@@ -19,7 +19,7 @@ declare abstract class DefaultService {
         paginate: Paginate;
     }): Promise<T[]>;
     protected static count(db: Db, query: any): Promise<number>;
-    protected static findById<T>(db: Db, id: string, options?: FindOneOptions<T>): Promise<T>;
+    protected static findById<T>(db: Db, id: string): Promise<T>;
     protected static insert<T>(db: Db, entity: T): Promise<T>;
     protected static update<T>(db: Db, entity: {
         _id: ObjectId;

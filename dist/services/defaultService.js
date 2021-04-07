@@ -73,7 +73,7 @@ class DefaultService {
         const result = await collection.aggregate(aggregation, Object.assign({}, this.options)).toArray();
         return result[0] ? result[0].docs : 0;
     }
-    static async findById(db, id, options) {
+    static async findById(db, id) {
         const collection = db.collection(this.collection);
         const aggregation = [
             ...this.aggregation,
@@ -125,7 +125,7 @@ DefaultService.sort = {};
 DefaultService.index = {};
 DefaultService.aggregation = [];
 DefaultService.options = {
-    collationOptions: {
+    collation: {
         locale: 'pt',
         strength: 1
     }

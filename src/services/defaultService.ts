@@ -1,5 +1,5 @@
 import Paginate from '@dfgpublicidade/node-pagination-module';
-import { Collection, Db, FindOneAndUpdateOption, FindOneOptions, ObjectId } from 'mongodb';
+import { Collection, Db, FindOneAndUpdateOption, ObjectId } from 'mongodb';
 
 /* Module */
 abstract class DefaultService {
@@ -12,7 +12,7 @@ abstract class DefaultService {
     protected static readonly index: any = {};
     protected static readonly aggregation: any[] = [];
     protected static readonly options: any = {
-        collationOptions: {
+        collation: {
             locale: 'pt',
             strength: 1
         }
@@ -119,7 +119,7 @@ abstract class DefaultService {
         return result[0] ? result[0].docs : 0;
     }
 
-    protected static async findById<T>(db: Db, id: string, options?: FindOneOptions<T>): Promise<T> {
+    protected static async findById<T>(db: Db, id: string): Promise<T> {
         const collection: Collection = db.collection(this.collection);
 
         const aggregation: any[] = [

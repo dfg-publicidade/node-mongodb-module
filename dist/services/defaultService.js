@@ -57,7 +57,7 @@ class DefaultService {
             aggregation.push({ $skip: options.paginate.getSkip() });
             aggregation.push({ $limit: options.paginate.getLimit() });
         }
-        return collection.aggregate(aggregation, Object.assign({}, this.collationOptions)).toArray();
+        return collection.aggregate(aggregation, Object.assign({}, this.options)).toArray();
     }
     static async count(db, query) {
         const collection = db.collection(this.collection);
@@ -70,7 +70,7 @@ class DefaultService {
                 $count: 'docs'
             }
         ];
-        const result = await collection.aggregate(aggregation, Object.assign({}, this.collationOptions)).toArray();
+        const result = await collection.aggregate(aggregation, Object.assign({}, this.options)).toArray();
         return result[0] ? result[0].docs : 0;
     }
     static async findById(db, id, options) {
@@ -84,7 +84,7 @@ class DefaultService {
                 $limit: 1
             }
         ];
-        const result = await collection.aggregate(aggregation, Object.assign({}, this.collationOptions)).toArray();
+        const result = await collection.aggregate(aggregation, Object.assign({}, this.options)).toArray();
         return result.length > 0 ? result[0] : undefined;
     }
     static async insert(db, entity) {
@@ -124,7 +124,7 @@ DefaultService.query = {};
 DefaultService.sort = {};
 DefaultService.index = {};
 DefaultService.aggregation = [];
-DefaultService.collationOptions = {
+DefaultService.options = {
     collationOptions: {
         locale: 'pt',
         strength: 1

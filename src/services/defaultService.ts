@@ -11,7 +11,7 @@ abstract class DefaultService {
     protected static readonly sort: any = {};
     protected static readonly index: any = {};
     protected static readonly aggregation: any[] = [];
-    protected static readonly collationOptions: any = {
+    protected static readonly options: any = {
         collationOptions: {
             locale: 'pt',
             strength: 1
@@ -96,7 +96,7 @@ abstract class DefaultService {
             aggregation.push({ $limit: options.paginate.getLimit() });
         }
 
-        return collection.aggregate(aggregation, { ...this.collationOptions }).toArray();
+        return collection.aggregate(aggregation, { ...this.options }).toArray();
     }
 
     protected static async count(db: Db, query: any): Promise<number> {
@@ -114,7 +114,7 @@ abstract class DefaultService {
             }
         ];
 
-        const result: any = await collection.aggregate(aggregation, { ...this.collationOptions }).toArray();
+        const result: any = await collection.aggregate(aggregation, { ...this.options }).toArray();
 
         return result[0] ? result[0].docs : 0;
     }
@@ -134,7 +134,7 @@ abstract class DefaultService {
             }
         ];
 
-        const result: any = await collection.aggregate(aggregation, { ...this.collationOptions }).toArray();
+        const result: any = await collection.aggregate(aggregation, { ...this.options }).toArray();
 
         return result.length > 0 ? result[0] : undefined;
     }

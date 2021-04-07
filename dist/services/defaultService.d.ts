@@ -9,7 +9,7 @@ declare abstract class DefaultService {
     protected static readonly sort: any;
     protected static readonly index: any;
     protected static readonly aggregation: any[];
-    protected static readonly collationOptions: any;
+    protected static readonly options: any;
     static translateParams(param: string, alias?: string): string;
     protected static hasSorting(): boolean;
     protected static hasIndex(): boolean;

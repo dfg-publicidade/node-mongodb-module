@@ -11,6 +11,10 @@ class MongoManager {
     public static async connect(config: any): Promise<MongoClient> {
         debug('Connection request received ');
 
+        if (!config) {
+            throw new Error('Connection config. was not provided.');
+        }
+
         if (MongoManager.client) {
             debug('Delivering previously made connection');
             return Promise.resolve(MongoManager.client);
@@ -33,7 +37,7 @@ class MongoManager {
                 MongoManager.client = client;
                 return Promise.resolve(MongoManager.client);
             }
-            catch (error) {
+            catch (error: any) {
                 debug('Connection attempt error');
                 return Promise.reject(error);
             }

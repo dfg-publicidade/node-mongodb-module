@@ -11,6 +11,9 @@ const debug = debug_1.default('module:mongodb-manager');
 class MongoManager {
     static async connect(config) {
         debug('Connection request received ');
+        if (!config) {
+            throw new Error('Connection config. was not provided.');
+        }
         if (MongoManager.client) {
             debug('Delivering previously made connection');
             return Promise.resolve(MongoManager.client);

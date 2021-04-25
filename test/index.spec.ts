@@ -18,10 +18,10 @@ describe('MongoManager', (): void => {
 
         config = {
             url: process.env.MONGO_TEST_URL,
-            "options": {
-                "poolSize": 20,
-                "useNewUrlParser": true,
-                "useUnifiedTopology": true
+            options: {
+                poolSize: 20,
+                useNewUrlParser: true,
+                useUnifiedTopology: true
             }
         };
     });
@@ -33,7 +33,7 @@ describe('MongoManager', (): void => {
     });
 
     it('1. connect', async (): Promise<void> => {
-        let connectionError;
+        let connectionError: any;
         try {
             await MongoManager.connect(undefined);
         }
@@ -46,7 +46,7 @@ describe('MongoManager', (): void => {
     });
 
     it('2. connect', async (): Promise<void> => {
-        let connectionError;
+        let connectionError: any;
         try {
             client = await MongoManager.connect({
                 ...config,

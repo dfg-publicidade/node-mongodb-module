@@ -5,7 +5,7 @@ import { Collection, Db, FindOneAndUpdateOption, ObjectId } from 'mongodb';
 abstract class DefaultService {
     protected static readonly collection: string = undefined;
     protected static readonly createdAtField: string = 'created_at';
-    protected static readonly updatedAtField: string = 'update_at';
+    protected static readonly updatedAtField: string = 'updated_at';
     protected static readonly deletedAtField: string = 'deleted_at';
     protected static readonly query: any = {};
     protected static readonly sort: any = {};
@@ -18,24 +18,8 @@ abstract class DefaultService {
         }
     };
 
-    public static translateParams(param: string, alias?: string): string {
-        if (!param) {
-            return '';
-        }
-        else if (param.indexOf('.') === -1) {
-            return param;
-        }
-        else {
-            if (param.indexOf(alias) !== -1) {
-                param = param.substring(param.indexOf(alias + 1));
-            }
-
-            return param;
-        }
-    }
-
     protected static hasSorting(): boolean {
-        return Object.keys(this.sort).length > 0;
+        return this.sort && Object.keys(this.sort).length > 0;
     }
 
     protected static hasIndex(): boolean {
@@ -59,16 +43,20 @@ abstract class DefaultService {
     }
 
     protected static async list<T>(db: Db, query: any, options?: {
-        sort: any;
-        paginate: Paginate;
+        sort?: any;
+        paginate?: Paginate;
     }): Promise<T[]> {
+        if (!db) {
+            throw new Error('Database must be provided.');
+        }
+
         const collection: Collection = db.collection(this.collection);
 
         if (this.hasIndex()) {
             this.createIndex(db);
         }
 
-        let sort: any = {};
+        let sort: any;
         if (options && options.sort && Object.keys(options.sort).length > 0) {
             sort = {
                 ...options.sort
@@ -87,9 +75,14 @@ abstract class DefaultService {
                     ...this.query,
                     ...query
                 }
-            },
-            { $sort: sort }
+            }
         ];
+
+        if (sort) {
+            aggregation.push({
+                $sort: sort
+            });
+        }
 
         if (options && options.paginate) {
             aggregation.push({ $skip: options.paginate.getSkip() });
@@ -100,6 +93,10 @@ abstract class DefaultService {
     }
 
     protected static async count(db: Db, query: any): Promise<number> {
+        if (!db) {
+            throw new Error('Database must be provided.');
+        }
+
         const collection: Collection = db.collection(this.collection);
 
         const aggregation: any[] = [
@@ -120,6 +117,16 @@ abstract class DefaultService {
     }
 
     protected static async findById<T>(db: Db, id: string): Promise<T> {
+        if (!db) {
+            throw new Error('Database must be provided.');
+        }
+        if (!id) {
+            throw new Error('ID must be provided.');
+        }
+        if (!ObjectId.isValid(id)) {
+            throw new Error('ID must be valid.');
+        }
+
         const collection: Collection = db.collection(this.collection);
 
         const aggregation: any[] = [
@@ -140,6 +147,13 @@ abstract class DefaultService {
     }
 
     protected static async insert<T>(db: Db, entity: T): Promise<T> {
+        if (!db) {
+            throw new Error('Database must be provided.');
+        }
+        if (!entity) {
+            throw new Error('Entity must be provided.');
+        }
+
         const collection: Collection = db.collection(this.collection);
 
         entity[this.createdAtField] = new Date();
@@ -150,6 +164,16 @@ abstract class DefaultService {
     }
 
     protected static async update<T>(db: Db, entity: { _id: ObjectId }, update: any): Promise<T> {
+        if (!db) {
+            throw new Error('Database must be provided.');
+        }
+        if (!entity) {
+            throw new Error('Entity must be provided.');
+        }
+        if (!update) {
+            throw new Error('Update data must be provided.');
+        }
+
         const collection: Collection = db.collection(this.collection);
 
         const query: any = { _id: entity._id };
@@ -168,6 +192,13 @@ abstract class DefaultService {
     }
 
     protected static async delete<T>(db: Db, entity: { _id: ObjectId }): Promise<T> {
+        if (!db) {
+            throw new Error('Database must be provided.');
+        }
+        if (!entity) {
+            throw new Error('Entity must be provided.');
+        }
+
         const collection: Collection = db.collection(this.collection);
 
         const query: any = { _id: entity._id };

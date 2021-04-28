@@ -10,13 +10,12 @@ declare abstract class DefaultService {
     protected static readonly index: any;
     protected static readonly aggregation: any[];
     protected static readonly options: any;
-    static translateParams(param: string, alias?: string): string;
     protected static hasSorting(): boolean;
     protected static hasIndex(): boolean;
     protected static createIndex(db: Db): Promise<any>;
     protected static list<T>(db: Db, query: any, options?: {
-        sort: any;
-        paginate: Paginate;
+        sort?: any;
+        paginate?: Paginate;
     }): Promise<T[]>;
     protected static count(db: Db, query: any): Promise<number>;
     protected static findById<T>(db: Db, id: string): Promise<T>;

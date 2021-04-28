@@ -3,22 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongodb_1 = require("mongodb");
 /* Module */
 class DefaultService {
-    static translateParams(param, alias) {
-        if (!param) {
-            return '';
-        }
-        else if (param.indexOf('.') === -1) {
-            return param;
-        }
-        else {
-            if (param.indexOf(alias) !== -1) {
-                param = param.substring(param.indexOf(alias + 1));
-            }
-            return param;
-        }
-    }
     static hasSorting() {
-        return Object.keys(this.sort).length > 0;
+        return this.sort && Object.keys(this.sort).length > 0;
     }
     static hasIndex() {
         return Object.keys(this.index).length > 0;
@@ -35,11 +21,14 @@ class DefaultService {
         return collection.createIndex(this.index);
     }
     static async list(db, query, options) {
+        if (!db) {
+            throw new Error('Database must be provided.');
+        }
         const collection = db.collection(this.collection);
         if (this.hasIndex()) {
             this.createIndex(db);
         }
-        let sort = {};
+        let sort;
         if (options && options.sort && Object.keys(options.sort).length > 0) {
             sort = Object.assign({}, options.sort);
         }
@@ -50,9 +39,13 @@ class DefaultService {
             ...this.aggregation,
             {
                 $match: Object.assign(Object.assign({}, this.query), query)
-            },
-            { $sort: sort }
+            }
         ];
+        if (sort) {
+            aggregation.push({
+                $sort: sort
+            });
+        }
         if (options && options.paginate) {
             aggregation.push({ $skip: options.paginate.getSkip() });
             aggregation.push({ $limit: options.paginate.getLimit() });
@@ -60,6 +53,9 @@ class DefaultService {
         return collection.aggregate(aggregation, Object.assign({}, this.options)).toArray();
     }
     static async count(db, query) {
+        if (!db) {
+            throw new Error('Database must be provided.');
+        }
         const collection = db.collection(this.collection);
         const aggregation = [
             ...this.aggregation,
@@ -74,6 +70,15 @@ class DefaultService {
         return result[0] ? result[0].docs : 0;
     }
     static async findById(db, id) {
+        if (!db) {
+            throw new Error('Database must be provided.');
+        }
+        if (!id) {
+            throw new Error('ID must be provided.');
+        }
+        if (!mongodb_1.ObjectId.isValid(id)) {
+            throw new Error('ID must be valid.');
+        }
         const collection = db.collection(this.collection);
         const aggregation = [
             ...this.aggregation,
@@ -88,12 +93,27 @@ class DefaultService {
         return result.length > 0 ? result[0] : undefined;
     }
     static async insert(db, entity) {
+        if (!db) {
+            throw new Error('Database must be provided.');
+        }
+        if (!entity) {
+            throw new Error('Entity must be provided.');
+        }
         const collection = db.collection(this.collection);
         entity[this.createdAtField] = new Date();
         const result = await collection.insertOne(entity);
         return result.ops[0];
     }
     static async update(db, entity, update) {
+        if (!db) {
+            throw new Error('Database must be provided.');
+        }
+        if (!entity) {
+            throw new Error('Entity must be provided.');
+        }
+        if (!update) {
+            throw new Error('Update data must be provided.');
+        }
         const collection = db.collection(this.collection);
         const query = { _id: entity._id };
         const set = {
@@ -105,6 +125,12 @@ class DefaultService {
         return result.value;
     }
     static async delete(db, entity) {
+        if (!db) {
+            throw new Error('Database must be provided.');
+        }
+        if (!entity) {
+            throw new Error('Entity must be provided.');
+        }
         const collection = db.collection(this.collection);
         const query = { _id: entity._id };
         const set = {
@@ -118,7 +144,7 @@ class DefaultService {
 }
 DefaultService.collection = undefined;
 DefaultService.createdAtField = 'created_at';
-DefaultService.updatedAtField = 'update_at';
+DefaultService.updatedAtField = 'updated_at';
 DefaultService.deletedAtField = 'deleted_at';
 DefaultService.query = {};
 DefaultService.sort = {};

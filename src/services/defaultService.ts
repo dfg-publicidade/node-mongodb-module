@@ -1,5 +1,5 @@
 import Paginate from '@dfgpublicidade/node-pagination-module';
-import { Collection, Db, FindOneAndUpdateOption, ObjectId } from 'mongodb';
+import { ClientSession, Collection, Db, FindOneAndUpdateOption, ObjectId } from 'mongodb';
 
 /* Module */
 abstract class DefaultService {
@@ -146,7 +146,7 @@ abstract class DefaultService {
         return result.length > 0 ? result[0] : undefined;
     }
 
-    protected static async insert<T>(db: Db, entity: T): Promise<T> {
+    protected static async insert<T>(db: Db, entity: T, session?: ClientSession): Promise<T> {
         if (!db) {
             throw new Error('Database must be provided.');
         }
@@ -158,12 +158,14 @@ abstract class DefaultService {
 
         entity[this.createdAtField] = new Date();
 
-        const result: any = await collection.insertOne(entity);
+        const result: any = await collection.insertOne(entity, {
+            session
+        });
 
         return result.ops[0];
     }
 
-    protected static async update<T>(db: Db, entity: { _id: ObjectId }, update: any): Promise<T> {
+    protected static async update<T>(db: Db, entity: { _id: ObjectId }, update: any, session?: ClientSession): Promise<T> {
         if (!db) {
             throw new Error('Database must be provided.');
         }
@@ -182,7 +184,7 @@ abstract class DefaultService {
                 ...update
             }
         };
-        const options: FindOneAndUpdateOption<T> = { returnOriginal: false };
+        const options: FindOneAndUpdateOption<T> = { returnOriginal: false, session };
 
         set.$set[this.updatedAtField] = new Date();
 
@@ -191,7 +193,7 @@ abstract class DefaultService {
         return result.value;
     }
 
-    protected static async delete<T>(db: Db, entity: { _id: ObjectId }): Promise<T> {
+    protected static async delete<T>(db: Db, entity: { _id: ObjectId }, session?: ClientSession): Promise<T> {
         if (!db) {
             throw new Error('Database must be provided.');
         }
@@ -205,7 +207,7 @@ abstract class DefaultService {
         const set: any = {
             $set: {}
         };
-        const options: FindOneAndUpdateOption<T> = { returnOriginal: false };
+        const options: FindOneAndUpdateOption<T> = { returnOriginal: false, session };
 
         set.$set[this.deletedAtField] = new Date();
 

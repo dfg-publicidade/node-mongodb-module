@@ -92,7 +92,7 @@ class DefaultService {
         const result = await collection.aggregate(aggregation, Object.assign({}, this.options)).toArray();
         return result.length > 0 ? result[0] : undefined;
     }
-    static async insert(db, entity) {
+    static async insert(db, entity, session) {
         if (!db) {
             throw new Error('Database must be provided.');
         }
@@ -101,10 +101,12 @@ class DefaultService {
         }
         const collection = db.collection(this.collection);
         entity[this.createdAtField] = new Date();
-        const result = await collection.insertOne(entity);
+        const result = await collection.insertOne(entity, {
+            session
+        });
         return result.ops[0];
     }
-    static async update(db, entity, update) {
+    static async update(db, entity, update, session) {
         if (!db) {
             throw new Error('Database must be provided.');
         }
@@ -119,12 +121,12 @@ class DefaultService {
         const set = {
             $set: Object.assign({}, update)
         };
-        const options = { returnOriginal: false };
+        const options = { returnOriginal: false, session };
         set.$set[this.updatedAtField] = new Date();
         const result = await collection.findOneAndUpdate(query, set, options);
         return result.value;
     }
-    static async delete(db, entity) {
+    static async delete(db, entity, session) {
         if (!db) {
             throw new Error('Database must be provided.');
         }
@@ -136,7 +138,7 @@ class DefaultService {
         const set = {
             $set: {}
         };
-        const options = { returnOriginal: false };
+        const options = { returnOriginal: false, session };
         set.$set[this.deletedAtField] = new Date();
         const result = await collection.findOneAndUpdate(query, set, options);
         return result.value;

@@ -45,7 +45,7 @@ abstract class DefaultService {
     protected static async list<T>(db: Db, query: any, options?: {
         sort?: any;
         paginate?: Paginate;
-    }): Promise<T[]> {
+    }, session?: ClientSession): Promise<T[]> {
         if (!db) {
             throw new Error('Database must be provided.');
         }
@@ -89,10 +89,13 @@ abstract class DefaultService {
             aggregation.push({ $limit: options.paginate.getLimit() });
         }
 
-        return collection.aggregate(aggregation, { ...this.options }).toArray();
+        return collection.aggregate(aggregation, {
+            ...this.options,
+            session
+        }).toArray();
     }
 
-    protected static async count(db: Db, query: any): Promise<number> {
+    protected static async count(db: Db, query: any, session?: ClientSession): Promise<number> {
         if (!db) {
             throw new Error('Database must be provided.');
         }
@@ -111,12 +114,15 @@ abstract class DefaultService {
             }
         ];
 
-        const result: any = await collection.aggregate(aggregation, { ...this.options }).toArray();
+        const result: any = await collection.aggregate(aggregation, {
+            ...this.options,
+            session
+        }).toArray();
 
         return result[0] ? result[0].docs : 0;
     }
 
-    protected static async findById<T>(db: Db, id: string): Promise<T> {
+    protected static async findById<T>(db: Db, id: string, session?: ClientSession): Promise<T> {
         if (!db) {
             throw new Error('Database must be provided.');
         }
@@ -141,7 +147,10 @@ abstract class DefaultService {
             }
         ];
 
-        const result: any = await collection.aggregate(aggregation, { ...this.options }).toArray();
+        const result: any = await collection.aggregate(aggregation, {
+            ...this.options,
+            session
+        }).toArray();
 
         return result.length > 0 ? result[0] : undefined;
     }

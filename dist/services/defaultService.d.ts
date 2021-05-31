@@ -16,9 +16,9 @@ declare abstract class DefaultService {
     protected static list<T>(db: Db, query: any, options?: {
         sort?: any;
         paginate?: Paginate;
-    }): Promise<T[]>;
-    protected static count(db: Db, query: any): Promise<number>;
-    protected static findById<T>(db: Db, id: string): Promise<T>;
+    }, session?: ClientSession): Promise<T[]>;
+    protected static count(db: Db, query: any, session?: ClientSession): Promise<number>;
+    protected static findById<T>(db: Db, id: string, session?: ClientSession): Promise<T>;
     protected static insert<T>(db: Db, entity: T, session?: ClientSession): Promise<T>;
     protected static update<T>(db: Db, entity: {
         _id: ObjectId;

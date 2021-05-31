@@ -20,7 +20,7 @@ class DefaultService {
         }
         return collection.createIndex(this.index);
     }
-    static async list(db, query, options) {
+    static async list(db, query, options, session) {
         if (!db) {
             throw new Error('Database must be provided.');
         }
@@ -50,9 +50,9 @@ class DefaultService {
             aggregation.push({ $skip: options.paginate.getSkip() });
             aggregation.push({ $limit: options.paginate.getLimit() });
         }
-        return collection.aggregate(aggregation, Object.assign({}, this.options)).toArray();
+        return collection.aggregate(aggregation, Object.assign(Object.assign({}, this.options), { session })).toArray();
     }
-    static async count(db, query) {
+    static async count(db, query, session) {
         if (!db) {
             throw new Error('Database must be provided.');
         }
@@ -66,10 +66,10 @@ class DefaultService {
                 $count: 'docs'
             }
         ];
-        const result = await collection.aggregate(aggregation, Object.assign({}, this.options)).toArray();
+        const result = await collection.aggregate(aggregation, Object.assign(Object.assign({}, this.options), { session })).toArray();
         return result[0] ? result[0].docs : 0;
     }
-    static async findById(db, id) {
+    static async findById(db, id, session) {
         if (!db) {
             throw new Error('Database must be provided.');
         }
@@ -89,7 +89,7 @@ class DefaultService {
                 $limit: 1
             }
         ];
-        const result = await collection.aggregate(aggregation, Object.assign({}, this.options)).toArray();
+        const result = await collection.aggregate(aggregation, Object.assign(Object.assign({}, this.options), { session })).toArray();
         return result.length > 0 ? result[0] : undefined;
     }
     static async insert(db, entity, session) {

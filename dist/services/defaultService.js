@@ -83,7 +83,7 @@ class DefaultService {
         const aggregation = [
             ...this.aggregation,
             {
-                $match: Object.assign(Object.assign({}, this.query), { _id: new mongodb_1.ObjectId(id) })
+                $match: Object.assign(Object.assign({}, this.query), { _id: id })
             },
             {
                 $limit: 1

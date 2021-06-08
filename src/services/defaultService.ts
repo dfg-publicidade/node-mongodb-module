@@ -122,7 +122,7 @@ abstract class DefaultService {
         return result[0] ? result[0].docs : 0;
     }
 
-    protected static async findById<T>(db: Db, id: string, session?: ClientSession): Promise<T> {
+    protected static async findById<T>(db: Db, id: ObjectId, session?: ClientSession): Promise<T> {
         if (!db) {
             throw new Error('Database must be provided.');
         }
@@ -140,7 +140,7 @@ abstract class DefaultService {
             {
                 $match: {
                     ...this.query,
-                    _id: new ObjectId(id)
+                    _id: id
                 }
             }, {
                 $limit: 1

@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongodb_1 = require("mongodb");
 /* Module */
 class DefaultService {
     static hasSorting() {
@@ -74,9 +73,6 @@ class DefaultService {
         }
         if (!id) {
             throw new Error('ID must be provided.');
-        }
-        if (!mongodb_1.ObjectId.isValid(id)) {
-            throw new Error('ID must be valid.');
         }
         const collection = db.collection(this.collection);
         const aggregation = [

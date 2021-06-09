@@ -129,9 +129,6 @@ abstract class DefaultService {
         if (!id) {
             throw new Error('ID must be provided.');
         }
-        if (!ObjectId.isValid(id)) {
-            throw new Error('ID must be valid.');
-        }
 
         const collection: Collection = db.collection(this.collection);
 

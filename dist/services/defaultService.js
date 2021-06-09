@@ -61,8 +61,7 @@ class DefaultService {
             ...this.aggregation,
             {
                 $match: Object.assign(Object.assign({}, this.query), query)
-            },
-            {
+            }, {
                 $count: 'docs'
             }
         ];
@@ -84,8 +83,7 @@ class DefaultService {
             ...this.aggregation,
             {
                 $match: Object.assign(Object.assign({}, this.query), { _id: id })
-            },
-            {
+            }, {
                 $limit: 1
             }
         ];

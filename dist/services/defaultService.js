@@ -132,7 +132,7 @@ class DefaultService {
         const set = {
             $set: {}
         };
-        const options = { returnReturnNewDocument: false, session };
+        const options = { returnNewDocument: true, session };
         set.$set[this.deletedAtField] = new Date();
         const result = await collection.findOneAndUpdate(query, set, options);
         return result.value;

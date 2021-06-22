@@ -213,7 +213,7 @@ abstract class DefaultService {
         const set: any = {
             $set: {}
         };
-        const options: FindOneAndUpdateOption<T> = { returnReturnNewDocument: false, session };
+        const options: FindOneAndUpdateOption<T> = { returnNewDocument: true, session };
 
         set.$set[this.deletedAtField] = new Date();
 

@@ -115,7 +115,7 @@ class DefaultService {
         const set = {
             $set: Object.assign({}, update)
         };
-        const options = { returnNewDocument: true, session };
+        const options = { returnDocument: 'after', session };
         set.$set[this.updatedAtField] = new Date();
         const result = await collection.findOneAndUpdate(query, set, options);
         return result.value;
@@ -132,7 +132,7 @@ class DefaultService {
         const set = {
             $set: {}
         };
-        const options = { returnNewDocument: true, session };
+        const options = { returnDocument: 'after', session };
         set.$set[this.deletedAtField] = new Date();
         const result = await collection.findOneAndUpdate(query, set, options);
         return result.value;

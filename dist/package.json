@@ -13,7 +13,8 @@
     "dependencies": {
         "@dfgpublicidade/node-app-module": "git+https://github.com/dfg-publicidade/node-app-module.git",
         "@dfgpublicidade/node-files-module": "git+https://github.com/dfg-publicidade/node-files-module.git",
-        "@dfgpublicidade/node-pagination-module": "git+https://github.com/dfg-publicidade/node-pagination-module.git"
+        "@dfgpublicidade/node-pagination-module": "git+https://github.com/dfg-publicidade/node-pagination-module.git",
+        "mongodb": "^3.6.9"
     },
     "devDependencies": {
         "@dfgpublicidade/eslint-config": "git+ssh://git@github.com/dfg-publicidade/eslint-config.git",

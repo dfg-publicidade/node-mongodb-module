@@ -38,6 +38,10 @@ class TestService extends DefaultService {
         return this.findById(db, id);
     }
 
+    public static async buscarPorAtributo(db: Db, nome: string, valor: any): Promise<Test> {
+        return this.findBy(db, nome, valor);
+    }
+
     public static async inserir(db: Db, entity: Test): Promise<Test> {
         return this.insert(db, entity);
     }
@@ -294,7 +298,47 @@ describe('DefaultService', (): void => {
         expect(test).to.be.undefined;
     });
 
-    it('17. insert', async (): Promise<void> => {
+    it('17. findBy', async (): Promise<void> => {
+        let serviceError: any;
+        try {
+            await TestService.buscarPorAtributo(undefined, '_id', id);
+        }
+        catch (err: any) {
+            serviceError = err;
+        }
+
+        expect(serviceError).to.exist;
+        expect(serviceError.message).to.be.eq('Database must be provided.');
+    });
+
+    it('18. findById', async (): Promise<void> => {
+        let serviceError: any;
+        try {
+            await TestService.buscarPorAtributo(db, undefined, id);
+        }
+        catch (err: any) {
+            serviceError = err;
+        }
+
+        expect(serviceError).to.exist;
+        expect(serviceError.message).to.be.eq('Field must be provided.');
+    });
+
+    it('19. findById', async (): Promise<void> => {
+        const test: Test = await TestService.buscarPorAtributo(db, '_id', new ObjectId(id));
+
+        expect(test).to.exist;
+        expect(test).have.property('name').eq('Test A');
+        expect(test).have.property('created_at').not.be.undefined;
+    });
+
+    it('20. findById', async (): Promise<void> => {
+        const test: Test = await TestService.buscarPorAtributo(db, '_id', new ObjectId());
+
+        expect(test).to.be.undefined;
+    });
+
+    it('21. insert', async (): Promise<void> => {
         let serviceError: any;
         try {
             const test: Test = new Test();
@@ -310,7 +354,7 @@ describe('DefaultService', (): void => {
         expect(serviceError.message).to.be.eq('Database must be provided.');
     });
 
-    it('18. insert', async (): Promise<void> => {
+    it('22. insert', async (): Promise<void> => {
         let serviceError: any;
         try {
             await TestService.inserir(db, undefined);
@@ -323,7 +367,7 @@ describe('DefaultService', (): void => {
         expect(serviceError.message).to.be.eq('Entity must be provided.');
     });
 
-    it('19. insert', async (): Promise<void> => {
+    it('23. insert', async (): Promise<void> => {
         let test: Test = new Test();
         test.name = 'Test C';
 
@@ -342,7 +386,7 @@ describe('DefaultService', (): void => {
         expect(test).have.property('created_at').not.be.undefined;
     });
 
-    it('20. update', async (): Promise<void> => {
+    it('24. update', async (): Promise<void> => {
         let serviceError: any;
         try {
             const test: Test = await db.collection('test').findOne({
@@ -361,7 +405,7 @@ describe('DefaultService', (): void => {
         expect(serviceError.message).to.be.eq('Database must be provided.');
     });
 
-    it('21. update', async (): Promise<void> => {
+    it('25. update', async (): Promise<void> => {
         let serviceError: any;
         try {
             await TestService.atualizar(db, undefined, {
@@ -376,7 +420,7 @@ describe('DefaultService', (): void => {
         expect(serviceError.message).to.be.eq('Entity must be provided.');
     });
 
-    it('22. update', async (): Promise<void> => {
+    it('26. update', async (): Promise<void> => {
         let serviceError: any;
         try {
             const test: Test = await db.collection('test').findOne({
@@ -393,7 +437,7 @@ describe('DefaultService', (): void => {
         expect(serviceError.message).to.be.eq('Update data must be provided.');
     });
 
-    it('23. update', async (): Promise<void> => {
+    it('27. update', async (): Promise<void> => {
         let test: Test = await db.collection('test').findOne({
             name: 'Test C'
         });
@@ -417,7 +461,7 @@ describe('DefaultService', (): void => {
         expect(test).have.property('updated_at').not.be.undefined;
     });
 
-    it('24. update', async (): Promise<void> => {
+    it('28. update', async (): Promise<void> => {
         let test: Test = await db.collection('test').findOne({
             name: 'Test C1'
         });
@@ -437,7 +481,7 @@ describe('DefaultService', (): void => {
         expect(test).to.not.exist;
     });
 
-    it('25. delete', async (): Promise<void> => {
+    it('29. delete', async (): Promise<void> => {
         let serviceError: any;
         try {
             const test: Test = await db.collection('test').findOne({
@@ -454,7 +498,7 @@ describe('DefaultService', (): void => {
         expect(serviceError.message).to.be.eq('Database must be provided.');
     });
 
-    it('26. delete', async (): Promise<void> => {
+    it('30. delete', async (): Promise<void> => {
         let serviceError: any;
         try {
             await TestService.excluir(db, undefined);
@@ -467,7 +511,7 @@ describe('DefaultService', (): void => {
         expect(serviceError.message).to.be.eq('Entity must be provided.');
     });
 
-    it('27. update', async (): Promise<void> => {
+    it('31. update', async (): Promise<void> => {
         let test: Test = await db.collection('test').findOne({
             name: 'Test B'
         });

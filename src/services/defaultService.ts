@@ -122,22 +122,25 @@ abstract class DefaultService {
         return result[0] ? result[0].docs : 0;
     }
 
-    protected static async findById<T>(db: Db, id: ObjectId, session?: ClientSession): Promise<T> {
+    protected static async findBy<T>(db: Db, field: string, value: any, session?: ClientSession): Promise<T> {
         if (!db) {
             throw new Error('Database must be provided.');
         }
-        if (!id) {
-            throw new Error('ID must be provided.');
+        if (!field) {
+            throw new Error('Field must be provided.');
         }
 
         const collection: Collection = db.collection(this.collection);
+
+        const query: any = {};
+        query[field] = value;
 
         const aggregation: any[] = [
             ...this.aggregation,
             {
                 $match: {
                     ...this.query,
-                    _id: id
+                    ...query
                 }
             }, {
                 $limit: 1
@@ -150,6 +153,17 @@ abstract class DefaultService {
         }).toArray();
 
         return result.length > 0 ? result[0] : undefined;
+    }
+
+    protected static async findById<T>(db: Db, id: ObjectId, session?: ClientSession): Promise<T> {
+        if (!db) {
+            throw new Error('Database must be provided.');
+        }
+        if (!id) {
+            throw new Error('ID must be provided.');
+        }
+
+        return this.findBy(db, '_id', id, session);
     }
 
     protected static async insert<T>(db: Db, entity: T, session?: ClientSession): Promise<T> {

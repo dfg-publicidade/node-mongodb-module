@@ -168,7 +168,7 @@ abstract class DefaultService {
             session
         });
 
-        return result.ops[0];
+        return this.findById(db, result.ops[0]._id);
     }
 
     protected static async update<T>(db: Db, entity: { _id: ObjectId }, update: any, session?: ClientSession): Promise<T> {
@@ -196,7 +196,7 @@ abstract class DefaultService {
 
         const result: any = await collection.findOneAndUpdate(query, set, options);
 
-        return result.value;
+        return result.value ? this.findById(db, result.value._id) : undefined;
     }
 
     protected static async delete<T>(db: Db, entity: { _id: ObjectId }, session?: ClientSession): Promise<T> {
@@ -213,7 +213,7 @@ abstract class DefaultService {
         const set: any = {
             $set: {}
         };
-        const options: FindOneAndUpdateOption<T> = { returnDocument: 'after', session };
+        const options: FindOneAndUpdateOption<T> = { returnDocument: 'before', session };
 
         set.$set[this.deletedAtField] = new Date();
 

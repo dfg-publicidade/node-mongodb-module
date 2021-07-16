@@ -67,6 +67,27 @@ class DefaultService {
         const result = await collection.aggregate(aggregation, Object.assign(Object.assign({}, this.options), { session })).toArray();
         return result[0] ? result[0].docs : 0;
     }
+    static async findBy(db, field, value, session) {
+        if (!db) {
+            throw new Error('Database must be provided.');
+        }
+        if (!field) {
+            throw new Error('Field must be provided.');
+        }
+        const collection = db.collection(this.collection);
+        const query = {};
+        query[field] = value;
+        const aggregation = [
+            ...this.aggregation,
+            {
+                $match: Object.assign(Object.assign({}, this.query), query)
+            }, {
+                $limit: 1
+            }
+        ];
+        const result = await collection.aggregate(aggregation, Object.assign(Object.assign({}, this.options), { session })).toArray();
+        return result.length > 0 ? result[0] : undefined;
+    }
     static async findById(db, id, session) {
         if (!db) {
             throw new Error('Database must be provided.');
@@ -74,17 +95,7 @@ class DefaultService {
         if (!id) {
             throw new Error('ID must be provided.');
         }
-        const collection = db.collection(this.collection);
-        const aggregation = [
-            ...this.aggregation,
-            {
-                $match: Object.assign(Object.assign({}, this.query), { _id: id })
-            }, {
-                $limit: 1
-            }
-        ];
-        const result = await collection.aggregate(aggregation, Object.assign(Object.assign({}, this.options), { session })).toArray();
-        return result.length > 0 ? result[0] : undefined;
+        return this.findBy(db, '_id', id, session);
     }
     static async insert(db, entity, session) {
         if (!db) {
@@ -98,7 +109,7 @@ class DefaultService {
         const result = await collection.insertOne(entity, {
             session
         });
-        return result.ops[0];
+        return this.findById(db, result.ops[0]._id);
     }
     static async update(db, entity, update, session) {
         if (!db) {
@@ -118,7 +129,7 @@ class DefaultService {
         const options = { returnDocument: 'after', session };
         set.$set[this.updatedAtField] = new Date();
         const result = await collection.findOneAndUpdate(query, set, options);
-        return result.value;
+        return result.value ? this.findById(db, result.value._id) : undefined;
     }
     static async delete(db, entity, session) {
         if (!db) {
@@ -132,7 +143,7 @@ class DefaultService {
         const set = {
             $set: {}
         };
-        const options = { returnDocument: 'after', session };
+        const options = { returnDocument: 'before', session };
         set.$set[this.deletedAtField] = new Date();
         const result = await collection.findOneAndUpdate(query, set, options);
         return result.value;

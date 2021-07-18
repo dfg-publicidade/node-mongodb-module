@@ -109,7 +109,7 @@ class DefaultService {
         const result = await collection.insertOne(entity, {
             session
         });
-        return this.findById(db, result.ops[0]._id);
+        return this.findById(db, result.ops[0]._id, session);
     }
     static async update(db, entity, update, session) {
         if (!db) {
@@ -129,7 +129,7 @@ class DefaultService {
         const options = { returnDocument: 'after', session };
         set.$set[this.updatedAtField] = new Date();
         const result = await collection.findOneAndUpdate(query, set, options);
-        return result.value ? this.findById(db, result.value._id) : undefined;
+        return result.value ? this.findById(db, result.value._id, session) : undefined;
     }
     static async delete(db, entity, session) {
         if (!db) {

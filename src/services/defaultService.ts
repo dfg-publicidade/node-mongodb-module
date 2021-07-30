@@ -166,7 +166,7 @@ abstract class DefaultService {
         return this.findBy(db, '_id', id, session);
     }
 
-    protected static async insert<T>(db: Db, entity: T, session?: ClientSession): Promise<T> {
+    protected static async insert<T extends { _id: ObjectId }>(db: Db, entity: T, session?: ClientSession): Promise<T> {
         if (!db) {
             throw new Error('Database must be provided.');
         }
@@ -185,7 +185,7 @@ abstract class DefaultService {
         return this.findById(db, result.ops[0]._id, session);
     }
 
-    protected static async update<T>(db: Db, entity: { _id: ObjectId }, update: any, session?: ClientSession): Promise<T> {
+    protected static async update<T extends { _id: ObjectId }>(db: Db, entity: T, update: any, session?: ClientSession): Promise<T> {
         if (!db) {
             throw new Error('Database must be provided.');
         }
@@ -213,7 +213,7 @@ abstract class DefaultService {
         return result.value ? this.findById(db, result.value._id, session) : undefined;
     }
 
-    protected static async delete<T>(db: Db, entity: { _id: ObjectId }, session?: ClientSession): Promise<T> {
+    protected static async delete<T extends { _id: ObjectId }>(db: Db, entity: T, session?: ClientSession): Promise<T> {
         if (!db) {
             throw new Error('Database must be provided.');
         }

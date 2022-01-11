@@ -26,7 +26,7 @@ class MongoManager {
             const options: MongoClientOptions = config.options;
 
             if (options.sslCA) {
-                options.sslCA = [fs.readFileSync(options.sslCA as unknown as string)];
+                options.ca = [fs.readFileSync(options.sslCA as unknown as string)];
             }
 
             try {
@@ -45,14 +45,12 @@ class MongoManager {
     }
 
     public static async close(): Promise<void> {
-        if (MongoManager.client?.isConnected()) {
-            debug('Closing connection');
+        debug('Closing connection');
 
-            await MongoManager.client.close();
-            MongoManager.client = undefined;
+        await MongoManager.client.close();
+        MongoManager.client = undefined;
 
-            debug('Connection close attempt error');
-        }
+        debug('Connection close attempt error');
     }
 
     public static getClient(): MongoClient {

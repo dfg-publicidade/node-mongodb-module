@@ -1,5 +1,5 @@
 import Paginate from '@dfgpublicidade/node-pagination-module';
-import { ClientSession, Collection, Db, FindOneAndUpdateOption, ObjectId } from 'mongodb';
+import { ClientSession, Collection, Db, Document, FindOneAndUpdateOptions, ObjectId } from 'mongodb';
 
 /* Module */
 abstract class DefaultService {
@@ -42,10 +42,10 @@ abstract class DefaultService {
         return collection.createIndex(this.index);
     }
 
-    protected static async list<T>(db: Db, query: any, options?: {
+    protected static async list(db: Db, query: any, options?: {
         sort?: any;
         paginate?: Paginate;
-    }, session?: ClientSession): Promise<T[]> {
+    }, session?: ClientSession): Promise<Document[]> {
         if (!db) {
             throw new Error('Database must be provided.');
         }
@@ -204,7 +204,7 @@ abstract class DefaultService {
                 ...update
             }
         };
-        const options: FindOneAndUpdateOption<T> = { returnDocument: 'after', session };
+        const options: FindOneAndUpdateOptions = { returnDocument: 'after', session };
 
         set.$set[this.updatedAtField] = new Date();
 
@@ -227,7 +227,7 @@ abstract class DefaultService {
         const set: any = {
             $set: {}
         };
-        const options: FindOneAndUpdateOption<T> = { returnDocument: 'before', session };
+        const options: FindOneAndUpdateOptions = { returnDocument: 'before', session };
 
         set.$set[this.deletedAtField] = new Date();
 

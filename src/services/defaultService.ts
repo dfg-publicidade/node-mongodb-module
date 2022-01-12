@@ -1,5 +1,5 @@
 import Paginate from '@dfgpublicidade/node-pagination-module';
-import { ClientSession, Collection, Db, Document, FindOneAndUpdateOptions, ObjectId } from 'mongodb';
+import { ClientSession, Collection, Db, FindOneAndUpdateOptions, ObjectId } from 'mongodb';
 
 /* Module */
 abstract class DefaultService {
@@ -42,10 +42,10 @@ abstract class DefaultService {
         return collection.createIndex(this.index);
     }
 
-    protected static async list(db: Db, query: any, options?: {
+    protected static async list<T>(db: Db, query: any, options?: {
         sort?: any;
         paginate?: Paginate;
-    }, session?: ClientSession): Promise<Document[]> {
+    }, session?: ClientSession): Promise<T[]> {
         if (!db) {
             throw new Error('Database must be provided.');
         }
@@ -89,7 +89,7 @@ abstract class DefaultService {
             aggregation.push({ $limit: options.paginate.getLimit() });
         }
 
-        return collection.aggregate(aggregation, {
+        return collection.aggregate<T>(aggregation, {
             ...this.options,
             session
         }).toArray();
@@ -182,7 +182,7 @@ abstract class DefaultService {
             session
         });
 
-        return this.findById(db, result.ops[0]._id, session);
+        return this.findById(db, result.insertedId, session);
     }
 
     protected static async update<T>(db: Db, entity: { _id: ObjectId }, update: any, session?: ClientSession): Promise<T> {

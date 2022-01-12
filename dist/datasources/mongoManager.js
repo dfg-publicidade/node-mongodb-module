@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const debug_1 = __importDefault(require("debug"));
-const fs_extra_1 = __importDefault(require("fs-extra"));
+const promises_1 = __importDefault(require("fs/promises"));
 const mongodb_1 = require("mongodb");
 /* Module */
 const debug = (0, debug_1.default)('module:mongodb-manager');
@@ -23,7 +23,7 @@ class MongoManager {
             const mongoCfg = Object.assign({}, config);
             const options = config.options;
             if (options.sslCA) {
-                options.ca = [fs_extra_1.default.readFileSync(options.sslCA)];
+                options.ca = [await promises_1.default.readFile(options.sslCA)];
             }
             try {
                 const client = await mongodb_1.MongoClient.connect(mongoCfg.url, options);
@@ -33,6 +33,7 @@ class MongoManager {
             }
             catch (error) {
                 debug('Connection attempt error');
+                MongoManager.client = undefined;
                 return Promise.reject(error);
             }
         }

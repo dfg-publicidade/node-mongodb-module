@@ -19,7 +19,6 @@ describe('MongoManager', (): void => {
         config = {
             url: process.env.MONGO_TEST_URL,
             options: {
-                poolSize: 20,
                 useNewUrlParser: true,
                 useUnifiedTopology: true
             }
@@ -27,7 +26,7 @@ describe('MongoManager', (): void => {
     });
 
     after(async (): Promise<void> => {
-        if (client && client.isConnected()) {
+        if (client) {
             client.close();
         }
     });
@@ -65,38 +64,28 @@ describe('MongoManager', (): void => {
         client = await MongoManager.connect(config);
 
         expect(client).to.exist;
-        expect(client.isConnected()).to.be.true;
     });
 
     it('4. connect', async (): Promise<void> => {
         client = await MongoManager.connect(config);
 
         expect(client).to.exist;
-        expect(client.isConnected()).to.be.true;
     });
 
     it('5. getClient', async (): Promise<void> => {
         client = await MongoManager.getClient();
 
         expect(client).to.exist;
-        expect(client.isConnected()).to.be.true;
     });
 
     it('6. close', async (): Promise<void> => {
         await MongoManager.close();
+        client = MongoManager.getClient();
 
-        expect(client).to.exist;
-        expect(client.isConnected()).to.be.false;
+        expect(client).to.not.exist;
     });
 
     it('7. close', async (): Promise<void> => {
-        await MongoManager.close();
-
-        expect(client).to.exist;
-        expect(client.isConnected()).to.be.false;
-    });
-
-    it('8. close', async (): Promise<void> => {
         client = await MongoManager.connect({
             url: process.env.MONGO_TEST_URL,
             options: {
@@ -106,6 +95,5 @@ describe('MongoManager', (): void => {
         });
 
         expect(client).to.exist;
-        expect(client.isConnected()).to.be.true;
     });
 });

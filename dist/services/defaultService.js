@@ -109,7 +109,7 @@ class DefaultService {
         const result = await collection.insertOne(entity, {
             session
         });
-        return this.findById(db, result.ops[0]._id, session);
+        return this.findById(db, result.insertedId, session);
     }
     static async update(db, entity, update, session) {
         if (!db) {

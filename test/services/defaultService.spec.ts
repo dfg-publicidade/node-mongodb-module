@@ -84,7 +84,6 @@ describe('DefaultService', (): void => {
         const client: MongoClient = await MongoManager.connect({
             url: process.env.MONGO_TEST_URL,
             options: {
-                poolSize: 20,
                 useNewUrlParser: true,
                 useUnifiedTopology: true
             }
@@ -377,7 +376,7 @@ describe('DefaultService', (): void => {
         expect(test).have.property('name').eq('Test C');
         expect(test).have.property('created_at').not.be.undefined;
 
-        test = await db.collection('test').findOne({
+        test = await db.collection<Test>('test').findOne({
             name: 'Test C'
         });
 
@@ -389,7 +388,7 @@ describe('DefaultService', (): void => {
     it('24. update', async (): Promise<void> => {
         let serviceError: any;
         try {
-            const test: Test = await db.collection('test').findOne({
+            const test: Test = await db.collection<Test>('test').findOne({
                 name: 'Test C'
             });
 
@@ -423,7 +422,7 @@ describe('DefaultService', (): void => {
     it('26. update', async (): Promise<void> => {
         let serviceError: any;
         try {
-            const test: Test = await db.collection('test').findOne({
+            const test: Test = await db.collection<Test>('test').findOne({
                 name: 'Test C'
             });
 
@@ -438,7 +437,7 @@ describe('DefaultService', (): void => {
     });
 
     it('27. update', async (): Promise<void> => {
-        let test: Test = await db.collection('test').findOne({
+        let test: Test = await db.collection<Test>('test').findOne({
             name: 'Test C'
         });
 
@@ -451,7 +450,7 @@ describe('DefaultService', (): void => {
         expect(test).have.property('created_at').not.be.undefined;
         expect(test).have.property('updated_at').not.be.undefined;
 
-        test = await db.collection('test').findOne({
+        test = await db.collection<Test>('test').findOne({
             name: 'Test C1'
         });
 
@@ -462,7 +461,7 @@ describe('DefaultService', (): void => {
     });
 
     it('28. update', async (): Promise<void> => {
-        let test: Test = await db.collection('test').findOne({
+        let test: Test = await db.collection<Test>('test').findOne({
             name: 'Test C1'
         });
 
@@ -474,7 +473,7 @@ describe('DefaultService', (): void => {
 
         expect(test).to.not.exist;
 
-        test = await db.collection('test').findOne({
+        test = await db.collection<Test>('test').findOne({
             name: 'Test C2'
         });
 
@@ -484,7 +483,7 @@ describe('DefaultService', (): void => {
     it('29. delete', async (): Promise<void> => {
         let serviceError: any;
         try {
-            const test: Test = await db.collection('test').findOne({
+            const test: Test = await db.collection<Test>('test').findOne({
                 name: 'Test B'
             });
 
@@ -512,13 +511,13 @@ describe('DefaultService', (): void => {
     });
 
     it('31. update', async (): Promise<void> => {
-        let test: Test = await db.collection('test').findOne({
+        let test: Test = await db.collection<Test>('test').findOne({
             name: 'Test B'
         });
 
         await TestService.excluir(db, test);
 
-        test = await db.collection('test').findOne({
+        test = await db.collection<Test>('test').findOne({
             name: 'Test B',
             // eslint-disable-next-line no-null/no-null
             deleted_at: null

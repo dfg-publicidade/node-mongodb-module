@@ -1,5 +1,5 @@
 import appDebugger from 'debug';
-import fs from 'fs-extra';
+import fs from 'fs/promises';
 import { MongoClient, MongoClientOptions } from 'mongodb';
 
 /* Module */
@@ -26,7 +26,7 @@ class MongoManager {
             const options: MongoClientOptions = config.options;
 
             if (options.sslCA) {
-                options.ca = [fs.readFileSync(options.sslCA as unknown as string)];
+                options.ca = [await fs.readFile(options.sslCA as unknown as string)];
             }
 
             try {
@@ -39,6 +39,7 @@ class MongoManager {
             }
             catch (error: any) {
                 debug('Connection attempt error');
+                MongoManager.client = undefined;
                 return Promise.reject(error);
             }
         }

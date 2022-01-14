@@ -86,6 +86,13 @@ describe('MongoManager', (): void => {
     });
 
     it('7. close', async (): Promise<void> => {
+        await MongoManager.close();
+        client = MongoManager.getClient();
+
+        expect(client).to.not.exist;
+    });
+
+    it('7. close', async (): Promise<void> => {
         client = await MongoManager.connect({
             url: process.env.MONGO_TEST_URL,
             options: {

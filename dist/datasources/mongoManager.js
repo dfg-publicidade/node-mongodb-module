@@ -40,8 +40,10 @@ class MongoManager {
     }
     static async close() {
         debug('Closing connection');
-        await MongoManager.client.close();
-        MongoManager.client = undefined;
+        if (MongoManager.client) {
+            await MongoManager.client.close();
+            MongoManager.client = undefined;
+        }
         debug('Connection close attempt error');
     }
     static getClient() {
